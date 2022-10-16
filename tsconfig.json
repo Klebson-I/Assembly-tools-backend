@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true, //Kiedy ustawione na true, trzeba podawać typ zmiennej jeżeli nie jest to OCZYWISTY typ
+    "preserveConstEnums": true, // brak zamiany typu enum w JS
+    "sourceMap": true,  // pozwala pokazać gdzie mamy błąd w pliku TS zamiast wskazyawć na przetranspilowany plik JS
+    "target": "ES6", //wersja javascriptu ecma script 6 itp...
+    "downlevelIteration": true, //żeby dobrze działały const for of i inne najnowsze JS składnie
+    "lib": ["dom", "es6", "dom.iterable"],
+    "outDir": "dist" //wyjściowy folder do przetranspilowania
+  }
+}
