@@ -10,7 +10,14 @@ export const logInAdmin = async (req: Request, res: Response) => {
         return;
     }
     const doesAdminExist = await AdminRecord.arePassesCorrect(login, password);
-    res.send({
-        isCorrect: doesAdminExist,
-    });
+    if (doesAdminExist) {
+        res.status(200).send({
+            isCorrect: doesAdminExist,
+        });
+    }
+    else {
+        res.status(201).send({
+            isCorrect: doesAdminExist,
+        });
+    }
 }
