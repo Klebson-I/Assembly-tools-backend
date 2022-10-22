@@ -33,7 +33,6 @@ interface TurningHolderRecordType {
 };
 
 export class TurningHolderRecord {
-
     id: string;
     KAPR1: number;
     KAPR2: number;
