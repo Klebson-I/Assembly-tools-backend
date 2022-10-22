@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import {loginRouter} from "./Routes/loginRouter";
-import {TurningHolderRecord} from "./Records/TurningHolderRecord";
+import {AssemblyItemRecord} from "./Records/AssemblyItemRecord";
 
 const app = express();
 app.use(cors());
@@ -9,7 +9,7 @@ app.use(express.json());
 app.use('/admin', loginRouter);
 
 (async() => {
-    const holder = await TurningHolderRecord.getAllByMatchingParams('1');
+    const holder = await AssemblyItemRecord.getAllByMatchingParams('1');
     console.log(holder)
 })();
 
