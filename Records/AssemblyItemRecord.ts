@@ -14,6 +14,8 @@ interface AssemblyItemRecordType {
     LB: number;
     WT: number;
     match_code: string;
+    name: string;
+    type: string;
 }
 
 export class AssemblyItemRecord {
@@ -30,6 +32,8 @@ export class AssemblyItemRecord {
     LB: number;
     WT: number;
     match_code: string;
+    name: string;
+    type: string;
 
     constructor (AssemblyItemRecordObject: AssemblyItemRecordType) {
         this.id = AssemblyItemRecordObject.id;
@@ -45,6 +49,8 @@ export class AssemblyItemRecord {
         this.LB = AssemblyItemRecordObject.LB;
         this.WT = AssemblyItemRecordObject.WT;
         this.match_code = AssemblyItemRecordObject.match_code;
+        this.name = AssemblyItemRecordObject.name;
+        this.type = AssemblyItemRecordObject.type;
     }
 
     static async getAll () {

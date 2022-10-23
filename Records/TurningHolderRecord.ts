@@ -30,6 +30,8 @@ interface TurningHolderRecordType {
     MIIDM: string;
     WT: number
     match_code: string;
+    name: string;
+    type: string;
 };
 
 export class TurningHolderRecord {
@@ -62,6 +64,8 @@ export class TurningHolderRecord {
     MIIDM: string;
     WT: number
     match_code: string;
+    name: string;
+    type: string;
 
     constructor (TurningHolderRecordObject: TurningHolderRecordType) {
         this.id = TurningHolderRecordObject.id;
@@ -93,6 +97,8 @@ export class TurningHolderRecord {
         this.MIIDM = TurningHolderRecordObject.MIIDM;
         this.WT = TurningHolderRecordObject.WT
         this.match_code = TurningHolderRecordObject.match_code;
+        this.name = TurningHolderRecordObject.name;
+        this.type = TurningHolderRecordObject.type;
     }
 
     static async getAll () {

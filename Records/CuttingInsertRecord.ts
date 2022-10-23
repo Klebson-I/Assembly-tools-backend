@@ -20,6 +20,8 @@ interface CuttingInsertRecordType {
     AN: number;
     WT: number;
     match_code: string;
+    name: string;
+    type: string;
 }
 
 
@@ -43,6 +45,8 @@ export class CuttingInsertRecord {
     AN: number;
     WT: number;
     match_code: string;
+    name: string;
+    type: string;
 
     constructor (CuttingInsertRecordObject: CuttingInsertRecordType) {
         this.id = CuttingInsertRecordObject.id;
@@ -64,6 +68,8 @@ export class CuttingInsertRecord {
         this.AN = CuttingInsertRecordObject.AN;
         this.WT = CuttingInsertRecordObject.WT;
         this.match_code = CuttingInsertRecordObject.match_code;
+        this.name = CuttingInsertRecordObject.name;
+        this.type = CuttingInsertRecordObject.type;
     }
 
     static async getAll () {
@@ -71,6 +77,19 @@ export class CuttingInsertRecord {
             const [results]
                 = await pool.execute('SELECT * from `cutting_insert`') as [CuttingInsertRecord[]];
             return results.map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
+        }
+        catch (e) {
+            console.log('DB error')
+        }
+    }
+    static async getOne (id: string) : Promise<CuttingInsertRecord> {
+        try {
+            const [results]
+                = await pool.execute('SELECT * from `cutting_insert` where `id`=:id',{
+                    id
+            }) as [CuttingInsertRecord[]];
+            const item = results.map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
+            return item.length > 0 ? item[0] : null;
         }
         catch (e) {
             console.log('DB error')

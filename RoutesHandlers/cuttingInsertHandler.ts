@@ -11,3 +11,14 @@ export const getAllCuttingInsertItemsByMatch = async (req: Request, res: Respons
     const allMatchingCuttingInsertItems = await CuttingInsertRecord.getAllByMatchingParams(match);
     res.status(200).send(allMatchingCuttingInsertItems);
 };
+
+export const getCuttingInsertById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    console.log(id)
+    const item = await CuttingInsertRecord.getOne(id);
+    if (item) {
+        res.status(200).send(item);
+        return;
+    }
+    res.status(205).send({msg: 'No tool found'});
+}
