@@ -112,6 +112,20 @@ export class TurningHolderRecord {
         }
     }
 
+    static async getOne (id: string) : Promise<TurningHolderRecord> {
+        try {
+            const [results]
+                = await pool.execute('SELECT * from `turning_holder` where `id`=:id',{
+                id
+            }) as [TurningHolderRecord[]];
+            const item = results.map((cutting_insert) => new TurningHolderRecord(cutting_insert));
+            return item.length > 0 ? item[0] : null;
+        }
+        catch (e) {
+            console.log('DB error');
+        }
+    }
+
     static async getAllByMatchingParams (param : string) {
         try {
             const [results]

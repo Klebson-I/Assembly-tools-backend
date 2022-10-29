@@ -64,6 +64,20 @@ export class AssemblyItemRecord {
         }
     }
 
+    static async getOne (id: string) : Promise<AssemblyItemRecord> {
+        try {
+            const [results]
+                = await pool.execute('SELECT * from `assembly_item` where `id`=:id',{
+                id
+            }) as [AssemblyItemRecord[]];
+            const item = results.map((cutting_insert) => new AssemblyItemRecord(cutting_insert));
+            return item.length > 0 ? item[0] : null;
+        }
+        catch (e) {
+            console.log('DB error')
+        }
+    }
+
     static async getAllByMatchingParams (param : string) {
         try {
             const [results]
