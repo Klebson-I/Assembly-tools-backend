@@ -7,9 +7,9 @@ export const getAllTurningHoldersItems = async (req: Request, res: Response) => 
     res.status(200).send(allTurningHolderItems);
 };
 
-export const getAllTurningHoldersItemsByMatch = async (req: Request, res: Response) => {
-    const { match } =req.params;
-    const allMatchingTurningHolderItems = await TurningHolderRecord.getAllByMatchingParams(match);
+export const getAllTurningHoldersItemsByInsert = async (req: Request, res: Response) => {
+    const { shape, size } =req.params;
+    const allMatchingTurningHolderItems = await TurningHolderRecord.getAllByInsertShapeAndSize(shape, size);
     res.status(200).send(allMatchingTurningHolderItems);
 };
 
@@ -22,4 +22,4 @@ export const getTurningHolderById = async (req: Request, res: Response) => {
         return;
     }
     res.status(205).send({msg: 'No tool found'});
-}
+};

@@ -1,6 +1,6 @@
 import {pool} from "../database";
 
-interface TurningHolderRecordType {
+export interface TurningHolderRecordType {
     id: string;
     KAPR1: number;
     KAPR2: number;
@@ -32,6 +32,7 @@ interface TurningHolderRecordType {
     match_code: string;
     name: string;
     type: string;
+    IS: number;
 };
 
 export class TurningHolderRecord {
@@ -66,6 +67,7 @@ export class TurningHolderRecord {
     match_code: string;
     name: string;
     type: string;
+    IS: number;
 
     constructor (TurningHolderRecordObject: TurningHolderRecordType) {
         this.id = TurningHolderRecordObject.id;
@@ -99,6 +101,7 @@ export class TurningHolderRecord {
         this.match_code = TurningHolderRecordObject.match_code;
         this.name = TurningHolderRecordObject.name;
         this.type = TurningHolderRecordObject.type;
+        this.IS = TurningHolderRecordObject.IS;
     }
 
     static async getAll () {
@@ -126,11 +129,19 @@ export class TurningHolderRecord {
         }
     }
 
-    static async getAllByMatchingParams (param : string) {
+    static async getAllByInsertShapeAndSize (shape: string, size: string) {
         try {
             const [results]
-                = await pool.execute('SELECT * from `turning_holder` where `match_code` = :param',{
-                    param
+                = await pool.execute('SELECT `turning_holder`.`MTP`, `turning_holder`.`id`, `turning_holder`.`KAPR1`, `turning_holder`.`KAPR2`,`turning_holder`.`PSIR`,`turning_holder`.`CUTINTMASTER`,\n' +
+                '`turning_holder`.`ADINTMS`, `turning_holder`.`RMPX`, `turning_holder`.`DMIN1`, `turning_holder`.`BAWS`, `turning_holder`.`BAMS`, `turning_holder`.`OHN`, `turning_holder`.`OHX`,\n' +
+                '`turning_holder`.`HAND`, `turning_holder`.`DPC`, `turning_holder`.`CP`, `turning_holder`.`LOCAP`, `turning_holder`.`DCON`, `turning_holder`.`LF`, `turning_holder`.`WF`,\n' +
+                '`turning_holder`.`HF`, `turning_holder`.`BD`, `turning_holder`.`GAMO`,\n' +
+                '`turning_holder`.`LAMS`, `turning_holder`.`TQ`, `turning_holder`.`BMC`, `turning_holder`.`MIIDM`, `turning_holder`.`WT`, `turning_holder`.`name`,\n' +
+                '`turning_holder`.`MTP`, `turning_holder`.`IS`, `turning_holder`.`type` FROM `turning_holder`\n' +
+                'INNER JOIN `cutting_insert` ON `cutting_insert`.`SC` = `turning_holder`.`MTP` AND `cutting_insert`.`IS` = `turning_holder`.`IS`\n' +
+                'WHERE `MTP`=:shape AND  `turning_holder`.`IS`=:size',{
+                    shape,
+                    size
             }) as [TurningHolderRecord[]];
             return results.map((turning_holder) => new TurningHolderRecord(turning_holder));
         }

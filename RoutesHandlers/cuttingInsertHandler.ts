@@ -7,8 +7,8 @@ export const getAllCuttingInsertItems = async (req: Request, res: Response) => {
 };
 
 export const getAllCuttingInsertItemsByMatch = async (req: Request, res: Response) => {
-    const { match } = req.params;
-    const allMatchingCuttingInsertItems = await CuttingInsertRecord.getAllByMatchingParams(match);
+    const { shape, size } = req.params;
+    const allMatchingCuttingInsertItems = await CuttingInsertRecord.getAllByHolderShapeAndSize(shape, size);
     res.status(200).send(allMatchingCuttingInsertItems);
 };
 

@@ -1,6 +1,6 @@
 import {pool} from "../database";
 
-interface CuttingInsertRecordType {
+export interface CuttingInsertRecordType {
     id: string;
     CPTP: string;
     IFS: number;
@@ -22,6 +22,7 @@ interface CuttingInsertRecordType {
     match_code: string;
     name: string;
     type: string;
+    IS: number;
 }
 
 
@@ -47,6 +48,7 @@ export class CuttingInsertRecord {
     match_code: string;
     name: string;
     type: string;
+    IS: number
 
     constructor (CuttingInsertRecordObject: CuttingInsertRecordType) {
         this.id = CuttingInsertRecordObject.id;
@@ -70,6 +72,7 @@ export class CuttingInsertRecord {
         this.match_code = CuttingInsertRecordObject.match_code;
         this.name = CuttingInsertRecordObject.name;
         this.type = CuttingInsertRecordObject.type;
+        this.IS = CuttingInsertRecordObject.IS;
     }
 
     static async getAll () {
@@ -96,11 +99,18 @@ export class CuttingInsertRecord {
         }
     }
 
-    static async getAllByMatchingParams (param : string) {
+    static async getAllByHolderShapeAndSize (shape: string, size: string) {
         try {
             const [results]
-                = await pool.execute('SELECT * from `cutting_insert` where `match_code` = :param',{
-                param
+                = await pool.execute('SELECT `cutting_insert`.`IS`, `cutting_insert`.`id`, `cutting_insert`.`CPTP`, `cutting_insert`.`IFS`, `cutting_insert`.`D1`,\n' +
+                '`cutting_insert`.`CEDC`, `cutting_insert`.`IC`, `cutting_insert`.`SC`, `cutting_insert`.`CUTINTSIZESHAPE`, `cutting_insert`.`LE`, `cutting_insert`.`RE`,\n' +
+                '`cutting_insert`.`WEP`, `cutting_insert`.`HAND`, `cutting_insert`.`GRADE`, `cutting_insert`.`SUBSTRATE`, `cutting_insert`.`COATING`, `cutting_insert`.`AN`,\n' +
+                '`cutting_insert`.`S`, `cutting_insert`.`WT`, `cutting_insert`.`match_code`, `cutting_insert`.`name`, `cutting_insert`.`type`, `turning_holder`.`MTP`, `turning_holder`.`IS`\n' +
+                'FROM `cutting_insert`\n' +
+                'INNER JOIN `turning_holder` ON `cutting_insert`.`SC` = `turning_holder`.`MTP` AND `cutting_insert`.`IS` = `turning_holder`.`IS`\n' +
+                'WHERE `MTP`=:shape AND  `cutting_insert`.`IS`=:size',{
+                shape,
+                size
             }) as [CuttingInsertRecord[]];
             return results.map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
         }

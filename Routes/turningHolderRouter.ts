@@ -1,7 +1,6 @@
 import {Request, Response, Router} from "express";
 import {
-    getAllTurningHoldersItems,
-    getAllTurningHoldersItemsByMatch,
+    getAllTurningHoldersItems, getAllTurningHoldersItemsByInsert,
     getTurningHolderById
 } from "../RoutesHandlers/turningHolderHandler";
 
@@ -10,4 +9,4 @@ export const turningHolderRouter = Router();
 turningHolderRouter
     .get('/',async (req: Request, res: Response) => await getAllTurningHoldersItems(req, res))
     .get('/:id', async (req: Request, res: Response) => await getTurningHolderById(req,res))
-    .get('/match/:match', async (req: Request, res: Response) => await getAllTurningHoldersItemsByMatch(req, res));
+    .get('/:shape/:size', async (req: Request, res: Response) => await getAllTurningHoldersItemsByInsert(req, res));

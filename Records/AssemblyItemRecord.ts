@@ -1,6 +1,6 @@
 import {pool} from "../database";
 
-interface AssemblyItemRecordType {
+export interface AssemblyItemRecordType {
     id: string;
     BMC: string;
     KGRPTP1: string;
