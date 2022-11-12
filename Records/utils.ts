@@ -9,6 +9,7 @@ interface ToolObject {
     CUTTING_INSERT?: CuttingInsertRecordType,
     TURNING_HOLDER?: TurningHolderRecordType,
     ASSEMBLY_ITEM?: AssemblyItemRecordType,
+    name: string;
 }
 
 const putTurningAssemblyToolToDatabase = async (toolObject: ToolObject) => {
@@ -37,12 +38,13 @@ const putTurningAssemblyToolToDatabase = async (toolObject: ToolObject) => {
 
     await Promise.all(listPromises);
 
-    await pool.execute('insert into `assembly_tool` values(:id, :type, :turning_holder_list, :cutting_insert_list, :assembly_item_list)',{
+    await pool.execute('insert into `assembly_tool` values(:id, :type, :turning_holder_list, :cutting_insert_list, :assembly_item_list, :name)',{
         id: newAssemblyToolId,
         type: toolObject.action,
         turning_holder_list: newTurningHolderListId,
         cutting_insert_list: newCuttingInsertListId,
         assembly_item_list: newAssemblyItemListId,
+        name: toolObject.name,
     })
 };
 
