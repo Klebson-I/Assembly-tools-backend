@@ -2,7 +2,7 @@ import {pool} from "../database";
 
 export interface CuttingInsertRecordType {
     id: string;
-    CPTP: string;
+    CTPT: string;
     IFS: number;
     D1: number;
     CUTINTSIZESHAPE: string;
@@ -28,7 +28,7 @@ export interface CuttingInsertRecordType {
 
 export class CuttingInsertRecord {
     id: string;
-    CPTP: string;
+    CTPT: string;
     IFS: number;
     D1: number;
     CUTINTSIZESHAPE: string;
@@ -52,7 +52,7 @@ export class CuttingInsertRecord {
 
     constructor (CuttingInsertRecordObject: CuttingInsertRecordType) {
         this.id = CuttingInsertRecordObject.id;
-        this.CPTP = CuttingInsertRecordObject.CPTP;
+        this.CTPT = CuttingInsertRecordObject.CTPT;
         this.IFS = CuttingInsertRecordObject.IFS;
         this.D1 = CuttingInsertRecordObject. D1;
         this.CUTINTSIZESHAPE = CuttingInsertRecordObject.CUTINTSIZESHAPE;
@@ -102,7 +102,7 @@ export class CuttingInsertRecord {
     static async getAllByHolderShapeAndSize (shape: string, size: string) {
         try {
             const [results]
-                = await pool.execute('SELECT `cutting_insert`.`IS`, `cutting_insert`.`id`, `cutting_insert`.`CPTP`, `cutting_insert`.`IFS`, `cutting_insert`.`D1`,\n' +
+                = await pool.execute('SELECT DISTINCT `cutting_insert`.`IS`, `cutting_insert`.`id`, `cutting_insert`.`CTPT`, `cutting_insert`.`IFS`, `cutting_insert`.`D1`,\n' +
                 '`cutting_insert`.`CEDC`, `cutting_insert`.`IC`, `cutting_insert`.`SC`, `cutting_insert`.`CUTINTSIZESHAPE`, `cutting_insert`.`LE`, `cutting_insert`.`RE`,\n' +
                 '`cutting_insert`.`WEP`, `cutting_insert`.`HAND`, `cutting_insert`.`GRADE`, `cutting_insert`.`SUBSTRATE`, `cutting_insert`.`COATING`, `cutting_insert`.`AN`,\n' +
                 '`cutting_insert`.`S`, `cutting_insert`.`WT`, `cutting_insert`.`match_code`, `cutting_insert`.`name`, `cutting_insert`.`type`, `turning_holder`.`MTP`, `turning_holder`.`IS`\n' +

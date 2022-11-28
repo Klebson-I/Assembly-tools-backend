@@ -2,6 +2,7 @@ import {pool} from "../database";
 import {TurningHolderRecord} from "./TurningHolderRecord";
 import {CuttingInsertRecord} from "./CuttingInsertRecord";
 import {AssemblyItemRecord} from "./AssemblyItemRecord";
+import {getTurningAssemblyTools} from "../functions/getTurningAssemblyTools";
 
 export interface AssemblyToolRecord {
     id: string;
@@ -42,21 +43,10 @@ export class AssemblyToolRecord {
 
     static async getAllAssemblyToolsForTurning () {
         const [results] = await pool.execute('select * from `assembly_tool` where `type`="TURNING"') as [AssemblyToolRecord[]];
-        const promiseArray = results.map(async ({ id: toolId, name }) => {
-            const [[turningHolderList]] = await pool.execute('select * from `turning_holder_list` where `assembly_id`=:toolId',{
-                toolId,
-            });
-            const [[cuttingInsertList]] = await pool.execute('select * from `cutting_insert_list` where `assembly_id`=:toolId',{
-                toolId,
-            });
-            const [[assemblyItemList]] = await pool.execute('select * from `assembly_item_list` where `assembly_id`=:toolId',{
-                toolId,
-            });
-            const turningHolder = await TurningHolderRecord.getOne(turningHolderList.turning_holder_id);
-            const cuttingInsert = await CuttingInsertRecord.getOne(cuttingInsertList.cutting_insert_id);
-            const assemblyItem = await AssemblyItemRecord.getOne(assemblyItemList.assembly_item_id);
+        const promiseArray = results.map(async ({ id, name }) => {
+           const { turningHolder, cuttingInsert, assemblyItem } = await getTurningAssemblyTools(id)
             return {
-                id: toolId,
+                id,
                 name,
                 TURNING_HOLDER: turningHolder,
                 CUTTING_INSERT: cuttingInsert,

@@ -6,6 +6,7 @@ import {AssemblyItemRecord} from "../Records/AssemblyItemRecord";
 import { writeFile } from 'fs/promises';
 import {join} from "path";
 import {v4} from 'uuid';
+import {getTurningAssemblyTools} from "./getTurningAssemblyTools";
 
 const XMLTAGS = {
     XML_HEADER: '<?xml version="1.0" encoding="UTF-8" ?>',
@@ -45,6 +46,7 @@ const XMLTAGS = {
     BOM_ITEM_INCLUDED_PARAM: '<id31009 Desc_EN="BOMitem included">', // described in ISO, make const with mapping feature
     BOM_ITEM_ID_PARAM: '<id31011 Desc_EN="BOMitem id">', // item id in item db
     BOM_ITEM_NOTE_PARAM: '<id31012 Desc_EN="BOMitem note">', // make a const with note if it's necessary
+    TOOL_SPECIFIC_TAG: '<TOOL_PARAMS>',
 };
 
 const getCloseTag = (tag: string) : string => {
@@ -56,38 +58,53 @@ const getCloseTag = (tag: string) : string => {
         return splitTag[0].replace('<','</');
     }
     return splitTag[0].replace('<','</') + '>';
-}
+};
 
 const getBomItemAttribute = (item: TurningHolderRecord| CuttingInsertRecord | AssemblyItemRecord) : string => {
     switch (item.type) {
         case 'CUTTING_INSERT': return 'I';
         case 'TURNING_HOLDER': return 'B';
         case 'ASSEMBLY_ITEM': return 'S';
-    }
-}
+    };
+};
 
 const getDateInProperFormat = () => {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-}
+};
+
+const getToolParamsXMLTag = (toolsList: (TurningHolderRecord | AssemblyItemRecord | CuttingInsertRecord)[]) : string => {
+
+    let toolsParamsStr = '';
+
+    toolsParamsStr+= XMLTAGS.TOOL_SPECIFIC_TAG;
+
+    const toolsParamsForEachParts = toolsList.map((tool) => {
+        let singleToolString = '';
+        singleToolString+=`<${tool.type}>\n`;
+        const paramsTagsStrings =
+            Object
+                .entries(tool)
+                .map(([name, value]) => `<parameter name="${name}">${value}</parameter> \n`)
+                .reduce((prev, curr) => prev + curr);
+        singleToolString+=paramsTagsStrings;
+        return singleToolString+=`</${tool.type}>\n`;
+        })
+        .reduce((prev, curr) => prev + curr);
+
+    toolsParamsStr+= toolsParamsForEachParts;
+    toolsParamsStr+= getCloseTag(XMLTAGS.TOOL_SPECIFIC_TAG) + '\n';
+    return toolsParamsStr;
+};
+
+
 
 
 export const createXMLFile = async (id: string) : Promise<string> => {
     const assemblyToolRecord = await AssemblyToolRecord.getOne(id);
 
     //TODO close in function depend on assembly type
-    const [[turningHolderList]] = await pool.execute('select * from `turning_holder_list` where `assembly_id`=:toolId',{
-        toolId: id,
-    });
-    const [[cuttingInsertList]] = await pool.execute('select * from `cutting_insert_list` where `assembly_id`=:toolId',{
-        toolId: id,
-    });
-    const [[assemblyItemList]] = await pool.execute('select * from `assembly_item_list` where `assembly_id`=:toolId',{
-        toolId: id,
-    });
-    const turningHolder = await TurningHolderRecord.getOne(turningHolderList.turning_holder_id);
-    const cuttingInsert = await CuttingInsertRecord.getOne(cuttingInsertList.cutting_insert_id);
-    const assemblyItem = await AssemblyItemRecord.getOne(assemblyItemList.assembly_item_id);
+    const { turningHolder, cuttingInsert, assemblyItem } = await getTurningAssemblyTools(id);
 
     if (!turningHolder || !cuttingInsert || !assemblyItem) {
         return '';
@@ -96,7 +113,6 @@ export const createXMLFile = async (id: string) : Promise<string> => {
     const items = [turningHolder, cuttingInsert, assemblyItem];
 
     let xmlFileText = '';
-
 
     xmlFileText+=XMLTAGS.XML_HEADER + '\n';
     xmlFileText+=XMLTAGS.TOOL_DATA_TAG + '\n';
@@ -162,6 +178,10 @@ export const createXMLFile = async (id: string) : Promise<string> => {
 
     xmlFileText+= getCloseTag(XMLTAGS.SPAREPART_DATA_TAG) + '\n';
     xmlFileText+= getCloseTag(XMLTAGS.TOOL_TAG) + '\n';
+
+
+    xmlFileText+=getToolParamsXMLTag(items);
+
     xmlFileText+= getCloseTag(XMLTAGS.TOOL_DATA_TAG) + '\n';
 
     const filePath = join(__dirname,`../xml/tool_${assemblyToolRecord.id}--${v4()}.xml`);

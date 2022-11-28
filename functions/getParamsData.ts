@@ -13,7 +13,7 @@ export const getParamsData = async () => {
     try {
         const [results]
             = await pool.execute('SELECT * from `param_description`') as [ParamsRecordType];
-        return results.length > 0 ? results[0] : null;
+        return results.length > 0 ? results : null;
     }
     catch (e) {
         console.log('DB error')

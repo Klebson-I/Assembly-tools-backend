@@ -7,6 +7,7 @@ import {allItemsRouter} from "./Routes/allItemsRouter";
 import {assemblyItemRouter} from "./Routes/assemblyItemRouter";
 import {setToolRouter} from "./Routes/setToolRouter";
 import {xmlRouter} from "./Routes/xmlRouter";
+import {paramsRouter} from "./Routes/paramsRouter";
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,7 @@ app.use('/assemblyitem', assemblyItemRouter);
 app.use('/all', allItemsRouter);
 app.use('/settool', setToolRouter);
 app.use('/xml', xmlRouter);
+app.use('/params', paramsRouter);
 
 app.listen(4000, () => {
     console.log('App is running on localhost:4000 !');
