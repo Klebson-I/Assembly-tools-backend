@@ -6,7 +6,7 @@ export const getAllCuttingInsertItems = async (req: Request, res: Response) => {
     res.status(200).send(allCuttingInsertItems);
 };
 
-export const getAllCuttingInsertItemsByMatch = async (req: Request, res: Response) => {
+export const getAllCuttingInsertsByHolder = async (req: Request, res: Response) => {
     const { shape, size } = req.params;
     const allMatchingCuttingInsertItems = await CuttingInsertRecord.getAllByHolderShapeAndSize(shape, size);
     res.status(200).send(allMatchingCuttingInsertItems);

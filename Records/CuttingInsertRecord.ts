@@ -112,7 +112,8 @@ export class CuttingInsertRecord {
                 shape,
                 size
             }) as [CuttingInsertRecord[]];
-            return results.map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
+            console.log(Array.from(new Set(results)))
+            return Array.from(new Set(results)).map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
         }
         catch (e) {
             console.log('DB error')
