@@ -26,7 +26,7 @@ export interface TurningHolderRecordType {
     GAMO: number;
     LAMS: number;
     TQ: number;
-    BMC: number;
+    BMC: string;
     MIIDM: string;
     WT: number
     match_code: string;
@@ -61,7 +61,7 @@ export class TurningHolderRecord {
     GAMO: number;
     LAMS: number;
     TQ: number;
-    BMC: number;
+    BMC: string;
     MIIDM: string;
     WT: number
     match_code: string;
