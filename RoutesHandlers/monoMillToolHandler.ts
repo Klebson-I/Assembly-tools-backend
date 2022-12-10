@@ -6,3 +6,8 @@ export const getSingleMonoMillTool = async (req: Request, res: Response) => {
     const item = await MonoMillingToolRecord.getOne(id);
     res.status(200).send(item);
 };
+
+export const getAllMonoMillTools = async (req: Request, res: Response) => {
+    const items = await MonoMillingToolRecord.getAll();
+    res.status(200).send(items);
+};
