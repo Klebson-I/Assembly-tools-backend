@@ -8,12 +8,33 @@ import {
     AssemblyMillItemPropertyType,
     AssemblyMillItemRecord,
 } from "../Records/AssemblyMillItemRecord";
-import {CuttingInsertMillProperty, CuttingInsertMillRecord} from "../Records/CuttingInsertMillRecord";
+import {
+    CuttingInsertMillProperty,
+    CuttingInsertMillRecord,
+    CuttingInsertMillRecordType
+} from "../Records/CuttingInsertMillRecord";
 
-interface GetTurningReturn {
+export interface GetTurningReturn {
     turningHolder: TurningHolderRecord;
     cuttingInsert: CuttingInsertRecord;
     assemblyItem: AssemblyItemRecord;
+}
+
+export interface GetMillingReturn {
+    INSERT_FOR_MILL: CuttingInsertMillRecordType;
+    INSERT_FOR_SLOT_CUT: CuttingInsertMillRecordType;
+    CASSETTE: AssemblyMillItemPropertyType;
+    INSERT_SCREW_MILL: AssemblyMillItemPropertyType;
+    CLAMPING_WEDGE_MILL: AssemblyMillItemPropertyType;
+    WEDGE_SCREW: AssemblyMillItemPropertyType;
+    BIT: AssemblyMillItemPropertyType;
+    KEY: AssemblyMillItemPropertyType;
+    TORQUE_WRENCH: AssemblyMillItemPropertyType;
+    ISO50: AssemblyMillItemPropertyType;
+    COLLET: AssemblyMillItemPropertyType;
+    END_MILL_MONO_HOLDER: MonoMillPropertyType;
+    DISC_CUTTER_HOLDER: MillingHolderPropertyType;
+    END_MILL_HOLDER: MillingHolderPropertyType;
 }
 
 export const getTurningAssemblyTools = async (id: string): Promise<GetTurningReturn> => {
@@ -86,7 +107,7 @@ const reduceToolsToProperObject = (tools: any) => {
     }, firstPartOfObject);
 };
 
-export const getMillingAssemblyTools = async (id: string) : Promise<{}> => {
+export const getMillingAssemblyTools = async (id: string) : Promise<GetMillingReturn> => {
     try {
         const [[millingHolderList]] = await pool.execute('select * from `mill_holder_list` where `assembly_id`=:toolId',{
             toolId: id,

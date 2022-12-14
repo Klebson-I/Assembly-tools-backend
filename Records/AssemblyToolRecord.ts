@@ -1,5 +1,7 @@
 import {pool} from "../database";
 import {getMillingAssemblyTools, getTurningAssemblyTools} from "../functions/getTurningAssemblyTools";
+// @ts-ignore
+import {Query} from "mysql2/promise";
 
 export interface AssemblyToolRecord {
     id: string;
@@ -19,12 +21,23 @@ export class AssemblyToolRecord {
     }
 
     async delete () : Promise<any> {
-        const promiseArray = [
-            pool.execute('delete  from `assembly_tool` where `id`=:id',{id: this.id}),
-            pool.execute('delete  from `assembly_item_list` where `assembly_id`=:id',{id: this.id}),
-            pool.execute('delete  from `cutting_insert_list` where `assembly_id`=:id',{id: this.id}),
-            pool.execute('delete  from `turning_holder_list` where `assembly_id`=:id',{id: this.id})
+        let promiseArray: Query[] = [];
+        if (this.type === 'TURNING') {
+            promiseArray = [
+                pool.execute('delete  from `assembly_tool` where `id`=:id',{id: this.id}),
+                pool.execute('delete  from `assembly_item_list` where `assembly_id`=:id',{id: this.id}),
+                pool.execute('delete  from `cutting_insert_list` where `assembly_id`=:id',{id: this.id}),
+                pool.execute('delete  from `turning_holder_list` where `assembly_id`=:id',{id: this.id}),
             ];
+        }
+        if (this.type === 'MILLING') {
+            promiseArray = [
+                pool.execute('delete  from `assembly_tool` where `id`=:id',{id: this.id}),
+                pool.execute('delete  from `assembly_item_list` where `assembly_id`=:id',{id: this.id}),
+                pool.execute('delete  from `cutting_insert_list` where `assembly_id`=:id',{id: this.id}),
+                pool.execute('delete  from `mill_holder_list` where `mill_holder_id`=:id',{id: this.id}),
+            ];
+        }
         return await Promise.all(promiseArray);
     }
 

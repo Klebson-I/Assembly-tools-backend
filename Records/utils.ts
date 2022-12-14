@@ -104,7 +104,6 @@ const createListOfPromisesForAssemblyItems = (toolsEntries: [keyof ToolObject, a
 const createListOfPromisesForMillCutAndHoldParts = (toolsEntries: [keyof ToolObject, any][], toolId: string) => {
     const [, holdPart] = toolsEntries.find(([key, ]) => HOLD_PARTS_MILL_KEYS.includes(key));
     if (holdPart.type === 'END_MILL_MONO_HOLDER') {
-        console.log('here1')
         const listId = uuid();
         return [
             pool.execute('insert into `mill_holder_list` values(:id, :assembly_id, :mill_holder_id)',{
