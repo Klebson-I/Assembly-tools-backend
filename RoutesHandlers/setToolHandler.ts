@@ -16,7 +16,12 @@ export const setTool = async (req: Request, res: Response) => {
 export const getAllUserAssemblyTools = async (req: Request, res: Response) => {
     try {
         const assemblyToolsForTurning = await AssemblyToolRecord.getAllAssemblyToolsForTurning();
-        res.status(200).send({msg: 'Assembly tools correctly loaded', payload: assemblyToolsForTurning});
+        const assemblyToolsForMilling = await AssemblyToolRecord.getAllAssemblyToolsForMilling();
+        const arrayOfAssemblies = [
+            ...assemblyToolsForTurning,
+            ...assemblyToolsForMilling,
+        ];
+        res.status(200).send({msg: 'Assembly tools correctly loaded', payload: arrayOfAssemblies});
     }
     catch (e) {
         res.status(400).send({msg: 'Cannot load assembly tools'});
