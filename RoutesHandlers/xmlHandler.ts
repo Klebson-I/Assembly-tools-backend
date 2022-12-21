@@ -4,9 +4,8 @@ import {createXMLFile} from "../functions/xmlFileGenerator";
 
 export const createAndDownloadXML = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const filePath = await createXMLFile(id);
-
+        const { id, isNullParamToReduce } = req.params;
+        const filePath = await createXMLFile(id, Boolean(Number(isNullParamToReduce)));
         if (!filePath) {
             res.status(400).send('Error occurred during file creation');
         }

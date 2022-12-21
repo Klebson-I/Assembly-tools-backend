@@ -4,5 +4,5 @@ import {getAllMillsHoldersAndMonoTools, getSingleMillHolder} from "../RoutesHand
 export const millingHolderRouter = Router();
 
 millingHolderRouter
-    .get('/allMills', async (req, res) => getAllMillsHoldersAndMonoTools(req, res))
+    .get('/allMills/:type', async (req, res) => getAllMillsHoldersAndMonoTools(req, res))
     .get('/:id', async (req: Request, res: Response) => getSingleMillHolder(req, res))

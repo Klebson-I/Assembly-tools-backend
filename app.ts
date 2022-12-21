@@ -12,6 +12,7 @@ import {millingHolderRouter} from "./Routes/millingHolderRouter";
 import {monoMillToolRouter} from "./Routes/monoMillToolRouter";
 import {cuttingInsertMillRouter} from "./Routes/cuttingInsertMillRouter";
 import {assemblyMillItemRouter} from "./Routes/assemblyMillItemRouter";
+import {drillRouter} from "./Routes/drillRouter";
 
 const app = express();
 app.use(cors());
@@ -28,6 +29,7 @@ app.use('/millHolder', millingHolderRouter);
 app.use('/monoMillTool', monoMillToolRouter);
 app.use('/cuttingInsertMill', cuttingInsertMillRouter);
 app.use('/assemblyMillItem', assemblyMillItemRouter);
+app.use('/drill', drillRouter);
 
 app.listen(4000, () => {
     console.log('App is running on localhost:4000 !');

@@ -6,6 +6,7 @@ import {MillingHolderRecord} from "../Records/MillingHolderRecord";
 import {MonoMillingToolRecord} from "../Records/MonoMillingToolRecord";
 import {CuttingInsertMillRecord} from "../Records/CuttingInsertMillRecord";
 import {AssemblyMillItemRecord} from "../Records/AssemblyMillItemRecord";
+import {DrillRecord} from "../Records/DrillRecord";
 
 const arrayOfAssemblyMillItemsTypes =
     ['CASSETTE', 'INSERT_SCREW_MILL', 'CLAMPING_WEDGE_MILL', 'WEDGE_SCREW', 'BIT', 'KEY', 'TORQUE_WRENCH'];
@@ -23,6 +24,7 @@ export const getAllItems = async (req: Request, res: Response) => {
         MonoMillingToolRecord.getAll(),
         CuttingInsertMillRecord.getAll(),
         AssemblyMillItemRecord.getAll(),
+        DrillRecord.getAll(),
     ]);
     const sortedItems = {
         cuttingInsertItems : results.find((itemsSubArr) => itemsSubArr.some((item) => item instanceof CuttingInsertRecord)),
@@ -34,6 +36,7 @@ export const getAllItems = async (req: Request, res: Response) => {
         assemblyMillItems: results.find((itemsSubArr) => itemsSubArr.some(
             (item) => arrayOfAssemblyMillItemsTypes.includes(item.type))
         ),
+        drills: results.find((itemsSubArr) => itemsSubArr.some((item) => item.type === 'DRILL')),
     };
     res.status(200).send(sortedItems);
 };

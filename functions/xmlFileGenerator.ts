@@ -12,7 +12,7 @@ import {
     GetTurningReturn
 } from "./getTurningAssemblyTools";
 import {MonoMillPropertyType} from "../Records/MonoMillingToolRecord";
-import {MillingHolderPropertyType} from "../Records/MillingHolderRecord";
+import {MillingHolderPropertyType, MillingHolderRecord, MillingHolderRecordType} from "../Records/MillingHolderRecord";
 import {CuttingInsertMillRecordType} from "../Records/CuttingInsertMillRecord";
 import {AssemblyMillItemPropertyType} from "../Records/AssemblyMillItemRecord";
 
@@ -32,6 +32,29 @@ const OPTIONAL_KEYS = [
     'ISO50',
     'TORQUE_WRENCH',
 ];
+
+const KEYS_FOR_QUANTITY_EVALUATION = [
+    'CASSETTE',
+    'CLAMPING_WEDGE_MILL',
+    'WEDGE_SCREW',
+    'INSERT_SCREW_MILL',
+];
+
+const OPTIONAL_CHAR = 'O';
+
+const REQUIRED_CHAR = 'R';
+
+const WEAR_CHAR = 'W';
+
+const INSERT_CHAR = 'I';
+
+const BODY_CHAR = 'B';
+
+const SPAREPART_CHAR = 'S';
+
+const FIXED_PART_CHAR = 'F';
+
+const ACCESSORY_CHAR = 'A';
 
 const XMLTAGS = {
     XML_HEADER: '<?xml version="1.0" encoding="UTF-8" ?>',
@@ -85,40 +108,65 @@ const getCloseTag = (tag: string) : string => {
     return splitTag[0].replace('<','</') + '>';
 };
 
-const getBomItemKind = (item: anyItemType) =>
-    ARRAY_OF_WEAR_KEYS.includes(item.type) ? "W" : " ";
+const getBomItemKind = (item: anyItemType) : string =>
+    ARRAY_OF_WEAR_KEYS.includes(item.type) ? WEAR_CHAR : " ";
 
-const getIncludedParam = (item: anyItemType) =>
-    OPTIONAL_KEYS.includes(item.type) ? 'O' : 'R';
+const getIncludedParam = (item: anyItemType) : string =>
+    OPTIONAL_KEYS.includes(item.type) ? OPTIONAL_CHAR : REQUIRED_CHAR;
 
 const getBomItemAttribute = (item: anyItemType) : string => {
     switch (item.type) {
-        case 'CUTTING_INSERT': return 'I';
-        case 'INSERT_FOR_SLOT_CUT': return 'I';
-        case 'INSERT_FOR_MILL': return 'I';
-        case 'TURNING_HOLDER': return 'B';
-        case 'DISC_CUTTER_HOLDER': return 'B';
-        case 'END_MILL_MONO_HOLDER': return 'B';
-        case 'END_MILL_HOLDER': return 'B';
-        case 'ASSEMBLY_ITEM': return 'S';
-        case 'ISO50': return 'S';
-        case 'COLLET': return 'S';
-        case 'CASSETTE': return 'S';
-        case 'TORQUE_WRENCH': return 'S';
-        case 'KEY': return 'S';
-        case 'BIT': return 'S';
-        case 'WEDGE_SCREW': return 'S';
-        case 'CLAMPING_WEDGE_MILL': return 'S';
-        case 'INSERT_SCREW_MILL': return 'S';
+        case 'CUTTING_INSERT': return INSERT_CHAR;
+        case 'INSERT_FOR_SLOT_CUT': return INSERT_CHAR;
+        case 'INSERT_FOR_MILL': return INSERT_CHAR;
+        case 'TURNING_HOLDER': return BODY_CHAR;
+        case 'DISC_CUTTER_HOLDER': return BODY_CHAR;
+        case 'END_MILL_MONO_HOLDER': return FIXED_PART_CHAR;
+        case 'END_MILL_HOLDER': return BODY_CHAR;
+        case 'ASSEMBLY_ITEM': return SPAREPART_CHAR;
+        case 'ISO50': return SPAREPART_CHAR;
+        case 'COLLET': return SPAREPART_CHAR;
+        case 'CASSETTE': return SPAREPART_CHAR;
+        case 'TORQUE_WRENCH': return ACCESSORY_CHAR;
+        case 'KEY': return ACCESSORY_CHAR;
+        case 'BIT': return SPAREPART_CHAR;
+        case 'WEDGE_SCREW': return SPAREPART_CHAR;
+        case 'CLAMPING_WEDGE_MILL': return SPAREPART_CHAR;
+        case 'INSERT_SCREW_MILL': return SPAREPART_CHAR;
     }
 };
 
-const getDateInProperFormat = () => {
+const getItemQuantityAttribute = (item: anyItemType, items: anyItemType[]) => {
+    if (!KEYS_FOR_QUANTITY_EVALUATION.includes(item.type)) {
+        return 1;
+    }
+    const { CICTTOT }: any = items.find((elem: MillingHolderPropertyType) => elem.CICTTOT)
+    return CICTTOT;
+};
+
+const getBomNoteParam = ({type}: anyItemType) => {
+    if (type === 'ISO50') {
+        return 'Use only with CNC machine';
+    }
+    if (type === 'COLLET') {
+        return 'Use only with ISO50';
+    }
+    return "";
+};
+
+const getDateInProperFormat = () : string => {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 
-const getToolParamsXMLTag = (toolsList: anyItemType[]) : string => {
+const filterToolParams = (value: any, isNullParamToReduce: boolean) : boolean => {
+    if (isNullParamToReduce) {
+        return value !== null;
+    }
+    return true;
+}
+
+const getToolParamsXMLTag = (toolsList: anyItemType[], isNullParamToReduce: boolean) : string => {
 
     let toolsParamsStr = '';
 
@@ -130,6 +178,7 @@ const getToolParamsXMLTag = (toolsList: anyItemType[]) : string => {
         const paramsTagsStrings =
             Object
                 .entries(tool)
+                .filter(([,value]) => filterToolParams(value, isNullParamToReduce))
                 .map(([name, value]) => `<parameter name="${name}">${value}</parameter> \n`)
                 .reduce((prev, curr) => prev + curr);
         singleToolString+=paramsTagsStrings;
@@ -153,7 +202,7 @@ const getItemsForXMLFile = async (id: string) : Promise<GetTurningReturn|GetMill
     }
 };
 
-export const createXMLFile = async (id: string) : Promise<string> => {
+export const createXMLFile = async (id: string, isNullParamToReduce: boolean) : Promise<string> => {
     const assemblyToolRecord = await AssemblyToolRecord.getOne(id);
 
     const items = await getItemsForXMLFile(id);
@@ -216,7 +265,7 @@ export const createXMLFile = async (id: string) : Promise<string> => {
     for (const item of itemsObjects) {
         xmlFileText+= XMLTAGS.BOM_TAG + '\n';
         xmlFileText+= XMLTAGS.BOM_POSITION_PARAM + `${itemsObjects.indexOf(item) + 1}` + getCloseTag(XMLTAGS.BOM_POSITION_PARAM) + '\n';
-        xmlFileText+= XMLTAGS.BOM_ITEM_PIECES_PARAM + 1 + getCloseTag(XMLTAGS.BOM_ITEM_PIECES_PARAM) + '\n';
+        xmlFileText+= XMLTAGS.BOM_ITEM_PIECES_PARAM + getItemQuantityAttribute(item, itemsObjects) + getCloseTag(XMLTAGS.BOM_ITEM_PIECES_PARAM) + '\n';
         xmlFileText+= XMLTAGS.BOM_ITEM_DESCRIPTION_PARAM + 'Description' + getCloseTag(XMLTAGS.BOM_ITEM_DESCRIPTION_PARAM) + '\n';
         xmlFileText+= XMLTAGS.BOM_ITEM_MATERIAL_PARAM + '' + getCloseTag(XMLTAGS.BOM_ITEM_MATERIAL_PARAM) + '\n';
         xmlFileText+= XMLTAGS.BOM_ITEM_NAME_PARAM + item.name + getCloseTag(XMLTAGS.BOM_ITEM_NAME_PARAM) + '\n';
@@ -224,7 +273,7 @@ export const createXMLFile = async (id: string) : Promise<string> => {
         xmlFileText+= XMLTAGS.BOM_ITEM_ATTRIBUTE_PARAM + getBomItemAttribute(item) + getCloseTag(XMLTAGS.BOM_ITEM_ATTRIBUTE_PARAM) + '\n';
         xmlFileText+= XMLTAGS.BOM_ITEM_INCLUDED_PARAM + getIncludedParam(item) + getCloseTag(XMLTAGS.BOM_ITEM_INCLUDED_PARAM) + '\n';
         xmlFileText+= XMLTAGS.BOM_ITEM_ID_PARAM + item.id + getCloseTag(XMLTAGS.BOM_ITEM_ID_PARAM) + '\n';
-        xmlFileText+= XMLTAGS.BOM_ITEM_NOTE_PARAM + 'Use only with ...' + getCloseTag(XMLTAGS.BOM_ITEM_NOTE_PARAM) + '\n';
+        xmlFileText+= XMLTAGS.BOM_ITEM_NOTE_PARAM + getBomNoteParam(item) + getCloseTag(XMLTAGS.BOM_ITEM_NOTE_PARAM) + '\n';
         xmlFileText+= getCloseTag(XMLTAGS.BOM_TAG) + '\n';
     }
 
@@ -232,7 +281,7 @@ export const createXMLFile = async (id: string) : Promise<string> => {
     xmlFileText+= getCloseTag(XMLTAGS.TOOL_TAG) + '\n';
 
 
-    xmlFileText+=getToolParamsXMLTag(itemsObjects);
+    xmlFileText+=getToolParamsXMLTag(itemsObjects, isNullParamToReduce);
 
     xmlFileText+= getCloseTag(XMLTAGS.TOOL_DATA_TAG) + '\n';
 

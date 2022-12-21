@@ -4,4 +4,4 @@ import {createAndDownloadXML} from "../RoutesHandlers/xmlHandler";
 export const xmlRouter = Router();
 
 xmlRouter
-    .get('/:id', async (req: Request, res: Response) => await createAndDownloadXML(req,res));
+    .get('/:id/:isNullParamToReduce', async (req: Request, res: Response) => await createAndDownloadXML(req,res));
