@@ -13,6 +13,7 @@ import {
     CuttingInsertMillRecord,
     CuttingInsertMillRecordType
 } from "../Records/CuttingInsertMillRecord";
+import {DrillRecord, DrillRecordType} from "../Records/DrillRecord";
 
 export interface GetTurningReturn {
     turningHolder: TurningHolderRecord;
@@ -35,6 +36,12 @@ export interface GetMillingReturn {
     END_MILL_MONO_HOLDER: MonoMillPropertyType;
     DISC_CUTTER_HOLDER: MillingHolderPropertyType;
     END_MILL_HOLDER: MillingHolderPropertyType;
+}
+
+export interface GetDrillingReturn {
+    DRILL: DrillRecordType;
+    ISO50: AssemblyMillItemPropertyType;
+    COLLET: AssemblyMillItemPropertyType;
 }
 
 export const getTurningAssemblyTools = async (id: string): Promise<GetTurningReturn> => {
@@ -62,24 +69,33 @@ export const getTurningAssemblyTools = async (id: string): Promise<GetTurningRet
     }
 };
 
-const getMillHolder = async (mill_holder_id: string) => {
-    const millHolder = await MillingHolderRecord.getOne(mill_holder_id);
-    return millHolder || await MonoMillingToolRecord.getOne(mill_holder_id);
-};
-
-const getMillAssemblyItems = async (assemblyItemList: {
+const getAssemblyItems = async (assemblyItemList: {
     id: string,
     assembly_id:string,
     assembly_item_id: string,
-}[]) => {
+}[] | {
+    id: string,
+    assembly_id:string,
+    assembly_item_id: string,
+}) => {
     const items = [];
 
+    if (!Array.isArray(assemblyItemList)) {
+        assemblyItemList = [assemblyItemList];
+    }
+
     for (let assemblyItem of assemblyItemList) {
-      const item = await AssemblyMillItemRecord.getOne(assemblyItem.assembly_item_id);
-      items.push(item);
+        const item = await AssemblyMillItemRecord.getOne(assemblyItem.assembly_item_id);
+        items.push(item);
     }
 
     return items;
+};
+
+
+const getMillHolder = async (mill_holder_id: string) => {
+    const millHolder = await MillingHolderRecord.getOne(mill_holder_id);
+    return millHolder || await MonoMillingToolRecord.getOne(mill_holder_id);
 };
 
 const reduceToolsToProperObject = (tools: any) => {
@@ -121,7 +137,7 @@ export const getMillingAssemblyTools = async (id: string) : Promise<GetMillingRe
 
         const millHolder = await getMillHolder(millingHolderList.mill_holder_id) as MonoMillPropertyType|MillingHolderPropertyType;
         const cuttingInsert = cuttingInsertList ? await CuttingInsertMillRecord.getOne(cuttingInsertList.cutting_insert_id) as CuttingInsertMillProperty : null;
-        const assemblyItems = await getMillAssemblyItems(assemblyItemList) as AssemblyMillItemPropertyType[];
+        const assemblyItems = await getAssemblyItems(assemblyItemList) as AssemblyMillItemPropertyType[];
 
         return reduceToolsToProperObject([
             millHolder,
@@ -131,5 +147,26 @@ export const getMillingAssemblyTools = async (id: string) : Promise<GetMillingRe
     }
     catch (e) {
         return null;
+    }
+};
+
+export const getDrillingAssemblyTools = async (id: string) : Promise<GetDrillingReturn> => {
+    try {
+
+        const [[drillList]] = await pool.execute('select * from `drill_list` where `assembly_id`=:toolId',{
+            toolId: id,
+        });
+        const [[assemblyItemList]] = await pool.execute('select * from `assembly_item_list` where `assembly_id`=:toolId',{
+            toolId: id,
+        });
+        const drill = await DrillRecord.getOne(drillList.drill_id);
+        const assemblyItems = await getAssemblyItems(assemblyItemList) as AssemblyMillItemPropertyType[];
+        return reduceToolsToProperObject([
+            drill,
+            assemblyItems,
+        ].filter((elem) => elem));
+    }
+    catch (e) {
+        console.log(e);
     }
 };

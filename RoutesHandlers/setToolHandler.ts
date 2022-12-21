@@ -17,9 +17,13 @@ export const getAllUserAssemblyTools = async (req: Request, res: Response) => {
     try {
         const assemblyToolsForTurning = await AssemblyToolRecord.getAllAssemblyToolsForTurning();
         const assemblyToolsForMilling = await AssemblyToolRecord.getAllAssemblyToolsForMilling();
+        const assemblyToolsForDrilling = await AssemblyToolRecord.getAllAssemblyToolsForDrilling();
+        // console.log(assemblyToolsForMilling)
+        // console.log(assemblyToolsForDrilling)
         const arrayOfAssemblies = [
             ...assemblyToolsForTurning,
             ...assemblyToolsForMilling,
+            ...assemblyToolsForDrilling,
         ];
         res.status(200).send({msg: 'Assembly tools correctly loaded', payload: arrayOfAssemblies});
     }

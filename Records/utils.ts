@@ -7,6 +7,7 @@ import {MillingHolderRecordType} from "./MillingHolderRecord";
 import {MonoMillingToolObject} from "./MonoMillingToolRecord";
 import {CuttingInsertMillRecordType} from "./CuttingInsertMillRecord";
 import {AssemblyMillItemRecordType} from "./AssemblyMillItemRecord";
+import {DrillRecordType} from "./DrillRecord";
 
 const ASSEMBLY_ITEMS_KEYS = [
     'ISO50',
@@ -51,6 +52,7 @@ interface ToolObject {
     WEDGE_SCREW?: AssemblyMillItemRecordType,
     COLLET?: AssemblyMillItemRecordType,
     ISO50?: AssemblyMillItemRecordType,
+    DRILL?: DrillRecordType,
     name: string;
 }
 
@@ -155,12 +157,41 @@ const putMillingAssemblyToolToDatabase = async (toolObject: ToolObject) : Promis
     })
 };
 
+const createPromiseForDrill = async (toolsEntries: [keyof ToolObject, any][], toolId: string) => {
+    const [, drill] = toolsEntries.find(([key, ]) => key === 'DRILL');
+    const listId = uuid();
+    return [
+        pool.execute('insert into `drill_list` values(:id, :assembly_id, :drill_id)',{
+            id: listId,
+            assembly_id: toolId,
+            drill_id: drill.id,
+        })
+    ]
+};
+
+const putDrillingAssemblyToolInDatabase = async (toolObject: ToolObject) => {
+    const newAssemblyToolId = uuid();
+    const selectedToolsEntries = Object.entries(toolObject)
+        .filter(([, value]) => value.id && value.id !== 'OPTIONAL') as [keyof ToolObject, any][];
+    const arrayOfPromisesForAssemblyItems = createListOfPromisesForAssemblyItems(selectedToolsEntries, newAssemblyToolId);
+    const promiseForDrill = createPromiseForDrill(selectedToolsEntries, newAssemblyToolId);
+    await Promise.all(arrayOfPromisesForAssemblyItems.concat(promiseForDrill));
+    await pool.execute('insert into `assembly_tool` values(:id, :type, :name)',{
+        id: newAssemblyToolId,
+        type: toolObject.action,
+        name: toolObject.name,
+    })
+};
+
 export const putAssemblyToolInDatabase = async (toolObject: ToolObject) => {
     if (toolObject.action === 'TURNING') {
         await putTurningAssemblyToolToDatabase(toolObject);
     }
     if (toolObject.action === 'MILLING') {
         await putMillingAssemblyToolToDatabase(toolObject);
+    }
+    if (toolObject.action === 'DRILLING') {
+        await putDrillingAssemblyToolInDatabase(toolObject);
     }
 }
 

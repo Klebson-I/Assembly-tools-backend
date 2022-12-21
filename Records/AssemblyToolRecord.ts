@@ -1,5 +1,9 @@
 import {pool} from "../database";
-import {getMillingAssemblyTools, getTurningAssemblyTools} from "../functions/getTurningAssemblyTools";
+import {
+    getDrillingAssemblyTools,
+    getMillingAssemblyTools,
+    getTurningAssemblyTools
+} from "../functions/getTurningAssemblyTools";
 // @ts-ignore
 import {Query} from "mysql2/promise";
 
@@ -38,6 +42,13 @@ export class AssemblyToolRecord {
                 pool.execute('delete  from `mill_holder_list` where `mill_holder_id`=:id',{id: this.id}),
             ];
         }
+        if (this.type === 'DRILLING') {
+            promiseArray = [
+                pool.execute('delete  from `assembly_tool` where `id`=:id',{id: this.id}),
+                pool.execute('delete  from `assembly_item_list` where `assembly_id`=:id',{id: this.id}),
+                pool.execute('delete  from `drill_list` where `assembly_id`=:id',{id: this.id}),
+            ];
+        }
         return await Promise.all(promiseArray);
     }
 
@@ -60,6 +71,19 @@ export class AssemblyToolRecord {
         const [results] = await pool.execute('select * from `assembly_tool` where `type`="MILLING"') as [AssemblyToolRecord[]];
         const promiseArray = results.map(async ({ id, name }) => {
             const toolObject = await getMillingAssemblyTools(id);
+            return {
+                id,
+                name,
+                ...toolObject,
+            }
+        })
+        return await Promise.all(promiseArray)
+    }
+
+    static async getAllAssemblyToolsForDrilling () {
+        const [results] = await pool.execute('select * from `assembly_tool` where `type`="DRILLING"') as [AssemblyToolRecord[]];
+        const promiseArray = results.map(async ({ id, name }) => {
+            const toolObject = await getDrillingAssemblyTools(id);
             return {
                 id,
                 name,
