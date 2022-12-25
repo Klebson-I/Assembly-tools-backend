@@ -52,7 +52,7 @@ export class MonoMillingToolRecord {
             return item.length > 0 ? item[0] : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 
@@ -63,7 +63,7 @@ export class MonoMillingToolRecord {
             return results.map((mill) => new MonoMillingToolRecord(mill).monoMillTool);
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 };

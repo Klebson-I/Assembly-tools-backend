@@ -1,4 +1,5 @@
 import {pool} from "../database";
+import {MillingHolderRecordType} from "./MillingHolderRecord";
 
 
 export interface CuttingInsertMillRecordType {
@@ -53,7 +54,7 @@ export class CuttingInsertMillRecord {
             return item.length > 0 ? item[0] : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 
@@ -64,7 +65,7 @@ export class CuttingInsertMillRecord {
             return results.map((insert) => (new CuttingInsertMillRecord(insert).cuttingInsertMill));
         }
         catch (e) {
-            console.log(e);
+            throw new Error(e.message);
         }
     };
 
@@ -77,7 +78,24 @@ export class CuttingInsertMillRecord {
             return results.map((insert) => new CuttingInsertMillRecord(insert).cuttingInsertMill);
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
+        }
+    };
+
+    static async getAllToMillHolder (millHolder: MillingHolderRecordType) : Promise<CuttingInsertMillProperty[]> {
+        const type = millHolder.type === 'END_MILL_HOLDER' ? 'INSERT_FOR_MILL' : 'INSERT_FOR_SLOT_CUT';
+        const { IS, MTP: SC} = millHolder;
+        try {
+            const [results]
+                = await pool.execute('SELECT * from `cutting_insert_mill` where `type`=:type and `IS`=:IS and `SC`=:SC',{
+                type,
+                IS,
+                SC,
+            }) as [CuttingInsertMillRecordType[]];
+            return results.map((insert) => new CuttingInsertMillRecord(insert).cuttingInsertMill);
+        }
+        catch (e) {
+            throw new Error(e.message);
         }
     };
 };

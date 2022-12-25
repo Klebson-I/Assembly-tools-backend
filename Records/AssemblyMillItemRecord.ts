@@ -49,7 +49,7 @@ export class AssemblyMillItemRecord {
             return item.length > 0 ? item[0].assemblyMillItem : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 
@@ -60,7 +60,7 @@ export class AssemblyMillItemRecord {
             return results.map((item) => (new AssemblyMillItemRecord(item).assemblyMillItem));
         }
         catch (e) {
-            console.log(e);
+            throw new Error(e.message);
         }
     };
 
@@ -73,7 +73,7 @@ export class AssemblyMillItemRecord {
             return results.map((item) => new AssemblyMillItemRecord(item).assemblyMillItem);
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 

@@ -62,7 +62,7 @@ export class MillingHolderRecord{
             return item.length > 0 ? item[0].millingHolder : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 
@@ -73,7 +73,7 @@ export class MillingHolderRecord{
             return results.map((holder) => (new MillingHolderRecord(holder).millingHolder));
         }
         catch (e) {
-            console.log(e);
+            throw new Error(e.message);
         }
     };
 
@@ -86,7 +86,7 @@ export class MillingHolderRecord{
             return results.map((holder) => new MillingHolderRecord(holder).millingHolder);
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 };

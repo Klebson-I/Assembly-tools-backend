@@ -53,7 +53,7 @@ export class DrillRecord {
             return item.length > 0 ? item[0].drill : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     };
 
@@ -64,7 +64,7 @@ export class DrillRecord {
             return results.map((drill) => new DrillRecord(drill).drill);
         }
         catch (e) {
-            console.log(e);
+            throw new Error(e.message);
         }
     };
 }

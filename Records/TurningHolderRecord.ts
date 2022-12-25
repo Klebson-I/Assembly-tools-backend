@@ -111,7 +111,7 @@ export class TurningHolderRecord {
             return results.map((turning_holder) => new TurningHolderRecord(turning_holder));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 
@@ -125,7 +125,7 @@ export class TurningHolderRecord {
             return item.length > 0 ? item[0] : null;
         }
         catch (e) {
-            console.log('DB error');
+            throw new Error(e.message);
         }
     }
 
@@ -146,7 +146,7 @@ export class TurningHolderRecord {
             return results.map((turning_holder) => new TurningHolderRecord(turning_holder));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 

@@ -60,7 +60,7 @@ export class AssemblyItemRecord {
             return results.map((assembly_item) => new AssemblyItemRecord(assembly_item));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 
@@ -74,7 +74,7 @@ export class AssemblyItemRecord {
             return item.length > 0 ? item[0] : null;
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 
@@ -87,7 +87,7 @@ export class AssemblyItemRecord {
             return results.map((assembly_item) => new AssemblyItemRecord(assembly_item));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 }

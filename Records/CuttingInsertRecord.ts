@@ -82,7 +82,7 @@ export class CuttingInsertRecord {
             return results.map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
     static async getOne (id: string) : Promise<CuttingInsertRecord> {
@@ -95,7 +95,7 @@ export class CuttingInsertRecord {
             return item.length > 0 ? item[0] : null;
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 
@@ -112,11 +112,10 @@ export class CuttingInsertRecord {
                 shape,
                 size
             }) as [CuttingInsertRecord[]];
-            console.log(Array.from(new Set(results)))
             return Array.from(new Set(results)).map((cutting_insert) => new CuttingInsertRecord(cutting_insert));
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 }
