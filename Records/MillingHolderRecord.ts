@@ -5,6 +5,8 @@ export type MillingHolderType = 'DISC_CUTTER_HOLDER' | 'END_MILL_HOLDER';
 export interface MillingHolderRecordType {
     id: string;
     KAPR: number|null;
+    CWN: number|null;
+    CWX: number|null;
     DC: number|null;
     CDXBFW: number|null;
     CICTTOT: number|null;

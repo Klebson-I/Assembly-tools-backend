@@ -22,12 +22,18 @@ export interface AssemblyMillItemRecordType {
     LU1: number;
     TQN: number;
     TQX: number;
+    D1: number;
+    DCON_MIN: number;
+    DCON_MAX: number;
+    COLLET_TYPE: string;
+    HOLD: string;
+    A: number;
 };
 
 export type AssemblyMillItemPropertyType = Record<null|string|number, keyof AssemblyMillItemRecordType>;
 
 export type AssemblyMillItemType = 'CASSETTE' | 'INSERT_SCREW_MILL' | 'CLAMPING_WEDGE_MILL'
-    | 'WEDGE_SCREW' | 'BIT' | 'KEY' | 'TORQUE_WRENCH';
+    | 'WEDGE_SCREW' | 'BIT' | 'KEY' | 'TORQUE_WRENCH'| 'ISO50' | 'COLLET';
 
 export class AssemblyMillItemRecord {
     assemblyMillItem: AssemblyMillItemPropertyType = {};

@@ -83,12 +83,13 @@ const getAssemblyItems = async (assemblyItemList: {
     if (!Array.isArray(assemblyItemList)) {
         assemblyItemList = [assemblyItemList];
     }
-
     for (let assemblyItem of assemblyItemList) {
-        const item = await AssemblyMillItemRecord.getOne(assemblyItem.assembly_item_id);
+        if (!assemblyItem) {
+            continue;
+        }
+        const item = await AssemblyMillItemRecord.getOne(assemblyItem?.assembly_item_id);
         items.push(item);
     }
-
     return items;
 };
 

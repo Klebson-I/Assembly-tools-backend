@@ -29,7 +29,7 @@ export class AdminRecord {
             return results.length === 1;
         }
         catch (e) {
-            console.log('DB error')
+            throw new Error(e.message);
         }
     }
 }
