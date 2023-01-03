@@ -180,3 +180,27 @@ export const autoSetToolForPocket = async (req: Request, res: Response) => {
     }
 };
 
+export const autoSetToolForVSlot = async (req: Request, res: Response) => {
+    try {
+        const {deg, L, H} = req.params;
+        const autoAssemblyTool = new AutoAssemblyTool({
+            action: 'V slot',
+            L: Number(L),
+            H: Number(H),
+            deg: String(deg),
+        });
+
+        const tool = await autoAssemblyTool.getToolForVSlot();
+
+        const responseObject = {
+            MILLING: tool,
+        }
+
+        res.status(200).send(responseObject);
+    }
+    catch (e) {
+        res.status(200).send({
+            msg: e.message,
+        })
+    }
+};

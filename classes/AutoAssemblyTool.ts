@@ -5,7 +5,7 @@ import {CuttingInsertMillProperty, CuttingInsertMillRecord} from "../Records/Cut
 import {AssemblyMillItemPropertyType, AssemblyMillItemRecord} from "../Records/AssemblyMillItemRecord";
 import {MonoMillingToolRecord} from "../Records/MonoMillingToolRecord";
 
-type actionName = 'internal slot'|
+type actionName = 'V slot'|
     'side slot'|
     'cut bar'|
     'surface planning'|
@@ -27,6 +27,7 @@ interface StartAutoAssemblyProperties  {
     readonly R?: number;
     readonly IT?: string;
     readonly BOTTOM?: string;
+    readonly deg?: string;
 }
 
 type ParametersObjectType = Omit<StartAutoAssemblyProperties, 'action'>;
@@ -47,6 +48,7 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
     readonly R?: number;
     readonly IT?: string;
     readonly BOTTOM?: string;
+    readonly deg?: string;
 
     private drillsForITClass : any = {
         IT6_10 : {
@@ -100,6 +102,7 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
         this.R = obj?.R || null;
         this.IT = obj?.IT || null;
         this.BOTTOM = obj?.BOTTOM || null;
+        this.deg = obj?.deg || null;
     }
 
     async getProperMillToolForHole () : Promise<EndMillForDrillTool> {
@@ -401,5 +404,9 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
         const holder = holders[0];
 
         return [holder];
+    }
+
+    async getToolForVSlot () : Promise<[]> {
+        return [];
     }
 };

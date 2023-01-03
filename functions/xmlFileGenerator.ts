@@ -6,13 +6,14 @@ import { writeFile } from 'fs/promises';
 import {join} from "path";
 import {v4} from 'uuid';
 import {
+    getDrillingAssemblyTools, GetDrillingReturn,
     getMillingAssemblyTools,
     GetMillingReturn,
     getTurningAssemblyTools,
     GetTurningReturn
 } from "./getTurningAssemblyTools";
 import {MonoMillPropertyType} from "../Records/MonoMillingToolRecord";
-import {MillingHolderPropertyType, MillingHolderRecord, MillingHolderRecordType} from "../Records/MillingHolderRecord";
+import {MillingHolderPropertyType} from "../Records/MillingHolderRecord";
 import {CuttingInsertMillRecordType} from "../Records/CuttingInsertMillRecord";
 import {AssemblyMillItemPropertyType} from "../Records/AssemblyMillItemRecord";
 
@@ -122,6 +123,8 @@ const getBomItemAttribute = (item: anyItemType) : string => {
         case 'TURNING_HOLDER': return BODY_CHAR;
         case 'DISC_CUTTER_HOLDER': return BODY_CHAR;
         case 'END_MILL_MONO_HOLDER': return FIXED_PART_CHAR;
+        case 'DRILL': return FIXED_PART_CHAR;
+        case 'ANGLE_CUTTER': return FIXED_PART_CHAR;
         case 'END_MILL_HOLDER': return BODY_CHAR;
         case 'ASSEMBLY_ITEM': return SPAREPART_CHAR;
         case 'ISO50': return SPAREPART_CHAR;
@@ -182,7 +185,7 @@ const getToolParamsXMLTag = (toolsList: anyItemType[], isNullParamToReduce: bool
                 .map(([name, value]) => `<parameter name="${name}">${value}</parameter> \n`)
                 .reduce((prev, curr) => prev + curr);
         singleToolString+=paramsTagsStrings;
-        return singleToolString += `</${tool.type}>\n`;
+        return singleToolString + `</${tool.type}>\n`;
         })
         .reduce((prev, curr) => prev + curr);
 
@@ -192,13 +195,16 @@ const getToolParamsXMLTag = (toolsList: anyItemType[], isNullParamToReduce: bool
 };
 
 
-const getItemsForXMLFile = async (id: string) : Promise<GetTurningReturn|GetMillingReturn> => {
+const getItemsForXMLFile = async (id: string) : Promise<GetTurningReturn|GetMillingReturn|GetDrillingReturn> => {
     const {type} = await AssemblyToolRecord.getOne(id);
     if (type === 'MILLING') {
         return await getMillingAssemblyTools(id);
     }
     if (type === 'TURNING') {
         return await getTurningAssemblyTools(id);
+    }
+    if (type === 'DRILLING') {
+        return await getDrillingAssemblyTools(id);
     }
 };
 

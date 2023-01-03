@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {
     autoSetToolForPocket,
-    autoSetToolForSideSlot, autoSetToolForSurfacePlanning,
+    autoSetToolForSideSlot, autoSetToolForSurfacePlanning, autoSetToolForVSlot,
     autoSetToolsForCutting, autoSetToolsForNoThroughDrilling, autoSetToolsForThroughDrilling
 } from "../RoutesHandlers/autoAssemblyRouterHandler";
 
@@ -15,3 +15,4 @@ autoAssemblyRouter
     .get('/surfaceplanning/:L/:L2/:H', async (req: Request, res: Response) => autoSetToolForSurfacePlanning(req,res))
     .get('/pocket/:L/:L2/:R/:AP', async (req: Request, res: Response) => autoSetToolForPocket(req,res))
     .get('/openpocket/:L/:L2/:R/:AP', async (req: Request, res: Response) => autoSetToolForPocket(req, res))
+    .get('/Vslot/:deg/:L/:H', async (req: Request, res: Response) => autoSetToolForVSlot(req, res))

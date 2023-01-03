@@ -77,4 +77,17 @@ export class MonoMillingToolRecord {
             throw new Error(e.message);
         }
     };
+
+    static async getAllByType (type: string) : Promise<MonoMillPropertyType[]>{
+        try {
+            const [results]
+                = await pool.execute('SELECT * from `mono_mill_tool` where `type`=:type',{
+                    type,
+            }) as [MonoMillingToolObject[]];
+            return results.map((mill) => new MonoMillingToolRecord(mill).monoMillTool);
+        }
+        catch (e) {
+            throw new Error(e.message);
+        }
+    };
 };

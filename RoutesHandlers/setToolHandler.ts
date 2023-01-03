@@ -5,7 +5,6 @@ import {AssemblyToolRecord} from "../Records/AssemblyToolRecord";
 export const setTool = async (req: Request, res: Response) => {
     try {
         const toolObject = req.body;
-        console.log(toolObject)
         await putAssemblyToolInDatabase(toolObject);
         res.status(200).send({msg: 'Tool saved in database'})
     }

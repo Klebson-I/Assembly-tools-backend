@@ -26,6 +26,7 @@ const HOLD_PARTS_MILL_KEYS = [
     'DISC_CUTTER_HOLDER',
     'END_MILL_HOLDER',
     'END_MILL_MONO_HOLDER',
+    'ANGLE_CUTTER',
 ];
 
 const CUT_PARTS_MILL_KEYS = [
@@ -105,7 +106,7 @@ const createListOfPromisesForAssemblyItems = (toolsEntries: [keyof ToolObject, a
 
 const createListOfPromisesForMillCutAndHoldParts = (toolsEntries: [keyof ToolObject, any][], toolId: string) => {
     const [, holdPart] = toolsEntries.find(([key, ]) => HOLD_PARTS_MILL_KEYS.includes(key));
-    if (holdPart.type === 'END_MILL_MONO_HOLDER') {
+    if (holdPart.type === 'END_MILL_MONO_HOLDER' || holdPart.type === 'ANGLE_CUTTER') {
         const listId = uuid();
         return [
             pool.execute('insert into `mill_holder_list` values(:id, :assembly_id, :mill_holder_id)',{
