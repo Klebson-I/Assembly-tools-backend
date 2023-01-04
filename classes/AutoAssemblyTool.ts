@@ -3,7 +3,7 @@ import {DrillRecordType} from "../Records/DrillRecord";
 import {MillingHolderRecordType} from "../Records/MillingHolderRecord";
 import {CuttingInsertMillProperty, CuttingInsertMillRecord} from "../Records/CuttingInsertMillRecord";
 import {AssemblyMillItemPropertyType, AssemblyMillItemRecord} from "../Records/AssemblyMillItemRecord";
-import {MonoMillingToolRecord} from "../Records/MonoMillingToolRecord";
+import {MonoMillingToolObject, MonoMillingToolRecord} from "../Records/MonoMillingToolRecord";
 
 type actionName = 'V slot'|
     'side slot'|
@@ -406,7 +406,22 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
         return [holder];
     }
 
-    async getToolForVSlot () : Promise<[]> {
-        return [];
+    async getToolForVSlot () : Promise<[MonoMillingToolObject]> {
+        if (!this.L || !this.H || !this.deg) {
+            throw new Error('Bad params');
+        }
+        const [result] = await pool.execute('SELECT * from `mono_mill_tool` where `DC`=:L AND `LU`=:H AND `δ`=:deg', {
+            L: this.L,
+            H: this.H,
+            deg: this.deg.split('deg')[0],
+        }) as [MonoMillingToolObject[]];
+
+        if (!result.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+
+        const angleCutter = result[0];
+
+        return [angleCutter];
     }
 };
