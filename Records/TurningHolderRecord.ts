@@ -33,6 +33,8 @@ export interface TurningHolderRecordType {
     name: string;
     type: string;
     IS: number;
+    INSERT_RE: number;
+    INSERT_AN: number;
 };
 
 export class TurningHolderRecord {
@@ -68,6 +70,8 @@ export class TurningHolderRecord {
     name: string;
     type: string;
     IS: number;
+    INSERT_RE: number;
+    INSERT_AN: number;
 
     constructor (TurningHolderRecordObject: TurningHolderRecordType) {
         this.id = TurningHolderRecordObject.id;
@@ -102,6 +106,8 @@ export class TurningHolderRecord {
         this.name = TurningHolderRecordObject.name;
         this.type = TurningHolderRecordObject.type;
         this.IS = TurningHolderRecordObject.IS;
+        this.INSERT_AN = TurningHolderRecordObject.INSERT_AN;
+        this.INSERT_RE = TurningHolderRecordObject.INSERT_RE;
     }
 
     static async getAll () {
@@ -135,10 +141,10 @@ export class TurningHolderRecord {
                 = await pool.execute('SELECT `turning_holder`.`MTP`, `turning_holder`.`id`, `turning_holder`.`KAPR1`, `turning_holder`.`KAPR2`,`turning_holder`.`PSIR`,`turning_holder`.`CUTINTMASTER`,\n' +
                 '`turning_holder`.`ADINTMS`, `turning_holder`.`RMPX`, `turning_holder`.`DMIN1`, `turning_holder`.`BAWS`, `turning_holder`.`BAMS`, `turning_holder`.`OHN`, `turning_holder`.`OHX`,\n' +
                 '`turning_holder`.`HAND`, `turning_holder`.`DPC`, `turning_holder`.`CP`, `turning_holder`.`LOCAP`, `turning_holder`.`DCON`, `turning_holder`.`LF`, `turning_holder`.`WF`,\n' +
-                '`turning_holder`.`HF`, `turning_holder`.`BD`, `turning_holder`.`GAMO`,\n' +
+                '`turning_holder`.`HF`,`turning_holder`.`INSERT_RE` , `turning_holder`.`INSERT_AN`,`turning_holder`.`BD`, `turning_holder`.`GAMO`,\n' +
                 '`turning_holder`.`LAMS`, `turning_holder`.`TQ`, `turning_holder`.`BMC`, `turning_holder`.`MIIDM`, `turning_holder`.`WT`, `turning_holder`.`name`,\n' +
                 '`turning_holder`.`MTP`, `turning_holder`.`IS`, `turning_holder`.`type` FROM `turning_holder`\n' +
-                'INNER JOIN `cutting_insert` ON `cutting_insert`.`SC` = `turning_holder`.`MTP` AND `cutting_insert`.`IS` = `turning_holder`.`IS`\n' +
+                'INNER JOIN `cutting_insert` ON `cutting_insert`.`SC` = `turning_holder`.`MTP` AND `cutting_insert`.`IS` = `turning_holder`.`IS` AND `cutting_insert`.`AN` = `turning_holder`.`INSERT_AN` AND `cutting_insert`.`RE` = `turning_holder`.`INSERT_RE`\n' +
                 'WHERE `MTP`=:shape AND  `turning_holder`.`IS`=:size',{
                     shape,
                     size
@@ -149,5 +155,4 @@ export class TurningHolderRecord {
             throw new Error(e.message);
         }
     }
-
 };

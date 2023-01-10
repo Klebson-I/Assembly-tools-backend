@@ -1,7 +1,4 @@
 import {pool} from "../database";
-import {MillingHolderRecordType} from "./MillingHolderRecord";
-
-export type MonoMillingType = 'END_MILL_MONO_HOLDER';
 
 export interface MonoMillingToolObject {
     id: string;

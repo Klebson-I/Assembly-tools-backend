@@ -4,6 +4,9 @@ import {MillingHolderRecordType} from "../Records/MillingHolderRecord";
 import {CuttingInsertMillProperty, CuttingInsertMillRecord} from "../Records/CuttingInsertMillRecord";
 import {AssemblyMillItemPropertyType, AssemblyMillItemRecord} from "../Records/AssemblyMillItemRecord";
 import {MonoMillingToolObject, MonoMillingToolRecord} from "../Records/MonoMillingToolRecord";
+import {CuttingInsertRecord} from "../Records/CuttingInsertRecord";
+import {AssemblyItemRecord} from "../Records/AssemblyItemRecord";
+import {TurningHolderRecord} from "../Records/TurningHolderRecord";
 
 type actionName = 'V slot'|
     'side slot'|
@@ -25,9 +28,12 @@ interface StartAutoAssemblyProperties  {
     readonly H?: number;
     readonly AP?: number;
     readonly R?: number;
+    readonly R1?: number;
+    readonly R2?: number;
     readonly IT?: string;
     readonly BOTTOM?: string;
     readonly deg?: string;
+    readonly HAND?: string;
 }
 
 type ParametersObjectType = Omit<StartAutoAssemblyProperties, 'action'>;
@@ -49,6 +55,9 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
     readonly IT?: string;
     readonly BOTTOM?: string;
     readonly deg?: string;
+    readonly R1?: number;
+    readonly R2?: number;
+    readonly HAND?: string;
 
     private drillsForITClass : any = {
         IT6_10 : {
@@ -103,6 +112,9 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
         this.IT = obj?.IT || null;
         this.BOTTOM = obj?.BOTTOM || null;
         this.deg = obj?.deg || null;
+        this.R1 = obj?.R1 || null;
+        this.R2 = obj?.R2 || null;
+        this.HAND = obj?.HAND || null;
     }
 
     async getProperMillToolForHole () : Promise<EndMillForDrillTool> {
@@ -364,7 +376,7 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
     }
 
     async getRoughToolForPocket () {
-        if (!this.L || !this.L2 || !this.AP || !this.R) {
+        if (!this.L || !this.L2 || !this.AP || !this.R1 || !this.R2) {
             throw new Error('Bad params');
         }
         const DC = this.getMaxDCForPocket();
@@ -388,13 +400,14 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
     }
 
     async getFinishingToolForPocket () {
-        if (!this.L || !this.L2 || !this.AP || !this.R) {
+        if (!this.L || !this.L2 || !this.AP || !this.R1 || !this.R2) {
             throw new Error('Bad params');
         }
         const DC = this.getMaxDCForPocket();
-        const [holders] = await pool.execute('SELECT * from `mono_mill_tool` WHERE  `DC`<=:DC AND `RE`<=:R AND `LF`>=:AP ORDER BY `DC` DESC',{
+        const [holders] = await pool.execute('SELECT * from `mono_mill_tool` WHERE  `DC`<=:DC AND `DC`<=:R1 AND `RE`<=:R2 AND `LF`>=:AP ORDER BY `DC` DESC',{
             DC,
-            R: this.R,
+            R1: this.R1*2,
+            R2: this.R2,
             AP:this.AP,
         });
 
@@ -424,4 +437,90 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
 
         return [angleCutter];
     }
+
+    async getToolForFacePlanning () : Promise<[TurningHolderRecord, CuttingInsertRecord, AssemblyItemRecord]> {
+        if (!this.D || !this.AP || !this.HAND) {
+            throw new Error('Bad params');
+        }
+        const [result] = await pool.execute('SELECT * from `turning_holder` where `HAND`=:HAND AND `LF`>:D',{
+            HAND: this.HAND,
+            D: this.D/2
+        }) as [TurningHolderRecord[]];
+
+        if (!result.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+        const holder = result[0];
+
+        const { MTP, IS } = holder;
+
+        const cuttingInserts = await CuttingInsertRecord.getAllByHolderShapeAndSize(MTP, String(IS));
+
+        if (!cuttingInserts.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+
+        const cuttingInsert = cuttingInserts[0];
+
+        const { match_code } = cuttingInsert;
+
+        const assemblyItems = await AssemblyItemRecord.getAllByMatchingParams(match_code);
+
+        if (!assemblyItems.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+
+        const assemblyItem = assemblyItems[0];
+
+        return [
+            holder,
+            cuttingInsert,
+            assemblyItem,
+        ]
+    }
+
+    async getToolForExternalGroove () : Promise<[TurningHolderRecord, CuttingInsertRecord, AssemblyItemRecord]> {
+        if (!this.L || !this.AP || !this.HAND) {
+            throw new Error('Bad params');
+        }
+        const [result] = await pool.execute('SELECT * from `turning_holder` where `HAND`=:HAND AND `LF`>:AP ',{
+            HAND: this.HAND,
+            AP: this.AP,
+            L: this.L,
+        }) as [TurningHolderRecord[]];
+
+        if (!result.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+        const holder = result[0];
+
+        const { MTP, IS } = holder;
+
+        const cuttingInserts = await CuttingInsertRecord.getAllByHolderShapeAndSize(MTP, String(IS));
+
+        const properInserts = cuttingInserts.filter(({ S }) => S < this.L)
+
+        if (!properInserts.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+
+        const cuttingInsert = properInserts[0];
+
+        const { match_code } = cuttingInsert;
+
+        const assemblyItems = await AssemblyItemRecord.getAllByMatchingParams(match_code);
+
+        if (!assemblyItems.length) {
+            throw new Error('No tools for operation with selected parameters');
+        }
+
+        const assemblyItem = assemblyItems[0];
+
+        return [
+            holder,
+            cuttingInsert,
+            assemblyItem,
+        ]
+    }
+
 };

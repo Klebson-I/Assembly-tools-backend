@@ -92,6 +92,12 @@ export class CuttingInsertMillRecord {
                 IS,
                 SC,
             }) as [CuttingInsertMillRecordType[]];
+
+            if (millHolder.type === 'END_MILL_HOLDER') {
+                return results.map((insert) => new CuttingInsertMillRecord(insert).cuttingInsertMill)
+                    .filter((insert) => Number(insert.KRINS) === millHolder.KAPR);
+            }
+
             return results.map((insert) => new CuttingInsertMillRecord(insert).cuttingInsertMill);
         }
         catch (e) {

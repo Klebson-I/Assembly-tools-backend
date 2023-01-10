@@ -155,13 +155,14 @@ export const autoSetToolForSurfacePlanning = async (req: Request, res: Response)
 
 export const autoSetToolForPocket = async (req: Request, res: Response) => {
     try {
-        const {L, L2, AP, R} = req.params;
+        const {L, L2, AP, R1, R2} = req.params;
         const autoAssemblyTool = new AutoAssemblyTool({
             action: 'pocket',
             L: Number(L),
             L2: Number(L2),
             AP: Number(AP),
-            R: Number(R),
+            R1: Number(R1),
+            R2: Number(R2),
         });
         const roughingTool = await autoAssemblyTool.getRoughToolForPocket();
         const finishingTool = await autoAssemblyTool.getFinishingToolForPocket();
@@ -194,6 +195,58 @@ export const autoSetToolForVSlot = async (req: Request, res: Response) => {
 
         const responseObject = {
             MILLING: tool,
+        }
+
+        res.status(200).send(responseObject);
+    }
+    catch (e) {
+        res.status(200).send({
+            msg: e.message,
+        })
+    }
+};
+
+export const autoSetToolForFacePlanning = async (req: Request, res: Response) => {
+    try {
+        const { D, AP, HAND } = req.params;
+
+        const autoAssemblyTool = new AutoAssemblyTool({
+            action: 'face planning',
+            D: Number(D),
+            AP: Number(AP),
+            HAND,
+        });
+
+        const tool = await autoAssemblyTool.getToolForFacePlanning();
+
+        const responseObject = {
+            TURNING: tool,
+        }
+
+        res.status(200).send(responseObject);
+    }
+    catch (e) {
+        res.status(200).send({
+            msg: e.message,
+        })
+    }
+};
+
+export const autoSetToolForExternalGroove = async (req: Request, res: Response) => {
+    try {
+        const { L, AP, HAND } = req.params;
+
+        const autoAssemblyTool = new AutoAssemblyTool({
+            action: 'face planning',
+            L: Number(L),
+            AP: Number(AP),
+            HAND,
+        });
+
+        const tool = await autoAssemblyTool.getToolForExternalGroove();
+
+        const responseObject = {
+            TURNING: tool,
         }
 
         res.status(200).send(responseObject);
