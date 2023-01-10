@@ -1,0 +1,106 @@
+﻿Symbol parametru;Opis angielski;Opis polski;Jednostka
+BMC;Body material code;Oznaczenie materiału korpusu;
+HAND;Tool direction;Kierunek;L / R / N
+id;ID of tool in database;ID narzędzia w bazie danych;
+MTP;Insert shape;Oznaczenie typu mocowania;C / D / H / K / L / O / P / R / S / T / V / W
+IS;Insert size;Wielkość miejsca aplikacji płytki;mm
+type;Type of tool;Typ narzędzia;Cutting insert / Turning holder / Assembly item
+name;Name of tool in catalog;Nazwa elementu;
+WT;Weight of tool;Ciężar elementu;kg
+CTPT;Operation type;Rodzaj obróbki;
+IFS;Insert mounting style code;Oznaczenie typu mocowania płytki;
+D1;Fixing hole diameter;Średnica otworu mocującego;mm
+CUTINTSIZESHAPE;Insert size and shape;Wielkość i kształt płytki;
+CEDC;Cutting edge count;Liczba krawędzi skrawających;
+IC;Inscribed circle diameter;Średnica okręgu wpisanego;mm
+SC;Insert shape code;Oznaczenie kształtu płytki;C / D / H / K / L / O / P / R / S / T / V / W
+LE;Cutting edge effective length;Efektywna długość krawędzi skrawającej;mm
+RE;Corner radius;Promień naroża;deg
+WEP;Wiper edge property;Właściwość naroża wiper;
+GRADE;Grade;Gatunek;
+SUBSTRATE;Substrate;Podłoże;
+COATING;Coating;Pokrycie;
+S;Insert thickness;Grubość płytki;mm
+AN;Clearance angle major;Główny kąt przyłożenia;deg
+KAPR1;Tool cutting edge angle;Kąt przystawienia narzędzia;deg
+KAPR2;Tool cutting edge angle;Kąt przystawienia narzędzia;deg
+PSIR;Tool lead angle;Kąt przystawienia narzędzia;deg
+CUTINTMASTER;Part 2 of cutting item interface identifiers;Część 2 oznaczeń złącza elementu skrawającego;
+ADINTMS;Adaptive interface machine direction;Złącze po stronie obrabiarki;
+RMPX;Maximum ramping angle;Maksymalny kąt zagłębiania skośnego;deg
+DMIN1;Minimum bore diameter;Średnica minimalna otworu mocującego;mm
+BAWS;Workpiece side body angle;Kąt korpusu po stronie przedmiotu obrabianego;deg
+BAMS;Machine side body angle;Kąt korpusu po stronie obrabiarki;deg
+OHN;Minimum overhang;Minimalny wysięg;mm
+OHX;Maximum overhang;Maksymalny wysięg;mm
+DPC;Damping property;Funkcja tłumienia drgań;
+CNSC;Coolant entry style code;Oznaczenie typu wlotu chłodziwa;
+CXSC;Coolant exit style code;Oznaczenie typu wylotu chłodziwa;
+CP;Coolant pressure;Ciśnienie chłodziwa;bar
+LOCAP;Location aid property;Właściwość pomocnicza lokalizacji;boolean
+DCON;Connection diameter;Średnica złącza;
+LF;Functional length;Długość funkcjonalna;mm
+WF;Functional width;Szerokość funkcjonalna;mm
+HF;Functional height;Wysokość funkcjonalna;mm
+BD;Body diameter;Średnica korpusu;mm
+GAMO;Orthogonal rake angle;Ortogonalny kąt natarcia;deg
+LAMS;Inclination angle;Kąt pochylenia;deg
+TQ;Torque;Moment obrotowy;Nm
+MIIDM;Master insert identification;Oznaczenie płytki głównej;
+KGRPTP1;Geometrical characteristic driven part;Charakterystyka geometryczna części napędzanej;
+KGRPS1;Size of driven part;Wielkość części napędzanej;
+HDD;Head diameter;Średnica głowicy;mm
+TA;Taper angle;Kąt stożka;deg
+TDZ2;Thread diameter size;Wielkość średnicy gwintu;mm
+THDH2;Thread hand;Kierunek gwintu;L / R
+THLGTH2;Thread length;Długość gwintu;mm
+OAL;Overall length;Długość całkowita;mm
+LB;Body length;Długość korpusu;mm
+TMC1ISO;Material classification level 1;Poziom 1 klasyfikacji materiałowej;P/M/K/N/S/H/O
+DC1;Cutting diameter;Średnica skrawania;mm
+DCX;Maximum cutting diameter;Maksymalna średnica skrawania;mm
+APMXPCF;Depth of cut maximum;Maksymalna głębokość skrawania;mm
+APMXPCB;Depth of cut maximum;Maksymalna głębokość skrawania;mm
+LU;Usable length;Długość użytkowa;mm
+ZEFP;Peripheral effective cutting edge count;Liczba efektywnych krawędzi na obrzeżu;
+COATING;Coating;Pokrycie;
+DN;Neck diameter;Średnica przewężenia;mm
+RPMX;Rotational speed maximum;Maksymalna prędkość obrotowa;1/min
+DC;Cutting diameter;Średnica skrawania;mm
+CDXBFW;Cutting depth maximum;Maksymalna głębokość skrawania;mm
+CICTTOT;Cutting item count;Liczba elementów skrawających;
+DHUB;Hub diameter;Średnica piasty;mm
+THUB;Hub thickness;Grubość piasty;mm
+DRVCT;Drive count;Liczba napędów;
+BD1;Body diameter;Średnica korpusu;mm
+LB1;Body length;Długość korpusu;mm
+KAPR;Tool cutting edge angle;Kąt przystawienia narzędzia;deg
+APMX;Depth of cut maximum;Maksymalna głębokość skrawania;mm
+CCC;Centre cutting capability;Ostrza centralne;1 - true / 0 - false
+AERMXPFW;Working engagement ratio maximum;Maksymalny współczynnik kontaktu roboczego;
+RMPXFFW;Maximum ramping angle;Maksymalny kąt zagłębiania skośnego;deg
+AZ;Maximum plunge depth;Maksymalna głębokość wgłębienia;mm
+CPDF;Cutting pitch differential;Podziałka nierównomierna;1 - true / 0 - false
+GAMF;Radial rake angle;Promieniowy kąt natarcia;deg
+GAMP;Axial rake angle;Osiowy kąt natarcia;deg
+DCF;Cutting diameter face contact;Średnica skrawania powierzchni styku;mm
+BSG;Basic standard group;Norma;
+BD2;Body diameter;Średnica korpusu;mm
+LB2;"	Body length";Długość korpusu;mm
+BHTA1;Body half taper angle;Kąt pasowany korpusu;deg
+BHTA2;Body half taper angle;Kąt pasowany korpusu;deg
+FHA;Flute helix angle;Kąt nachylenia linii śrubowej rowka wiórowego;deg
+TCDCON;Connection diameter tolerance;Tolerancja średnicy złącza;
+NORGMX;Maximum regrinds;Maksymalna liczba przeostrzeń;
+TQN;Torque minimum;Minimalny moment obrotowy;Nm
+TQX;Torque;Maksymalny moment obrotowy;Nm
+TCHA;Achievable hole tolerance;Osiągalna tolerancja otworu;
+ULDR;Usable length diameter ratio;Stosunek długości użytkowej do średnicy;
+SIG;Point angle;Kąt wierzchołkowy;deg
+PL;Point length;Długość wierzchołka;mm
+LCF;Chip flute length;Długość rowka wiórowego;mm
+DCON_MIN;Minimum hold diamiter;Minimalna średnica złącza;mm
+DCON_MAX;Maximum hold diamiter;Maksymalna średnica złącza;mm
+COLLET_TYPE;Type of collet;Oznaczenie tulejki;
+HOLD;Hold type;Typ chwytu;
+A;Iso 50 body length;Długość korpusu iso 50;mm
