@@ -483,7 +483,7 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
         if (!this.L || !this.AP || !this.HAND) {
             throw new Error('Bad params');
         }
-        const [result] = await pool.execute('SELECT * from `turning_holder` where `HAND`=:HAND AND `LF`>:AP ',{
+        const [result] = await pool.execute('SELECT * from `turning_holder` where `HAND`=:HAND',{
             HAND: this.HAND,
             AP: this.AP,
             L: this.L,
@@ -498,7 +498,7 @@ export class AutoAssemblyTool implements StartAutoAssemblyProperties{
 
         const cuttingInserts = await CuttingInsertRecord.getAllByHolderShapeAndSize(MTP, String(IS));
 
-        const properInserts = cuttingInserts.filter(({ S }) => S < this.L)
+        const properInserts = cuttingInserts.filter(({ S, LE }) => S <= this.L && this.AP < LE);
 
         if (!properInserts.length) {
             throw new Error('No tools for operation with selected parameters');
